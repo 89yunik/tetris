@@ -53,9 +53,24 @@ function spawnPiece() {
 }
 
 function updateCurrentPiece() {
-  clearCurrentPiece((pieceWidth = currentPiece.shape[0].length), (pieceHeight = currentPiece.shape.length))
-  moveDownCurrentPiece()
-  drawCurrentPiece()
+  if (canMovePiece(currentX, currentY + 1)) {
+    clearCurrentPiece((pieceWidth = currentPiece.shape[0].length), (pieceHeight = currentPiece.shape.length))
+    moveDownCurrentPiece()
+    drawCurrentPiece()
+  } else {
+    mergeCurrentPiece()
+    spawnPiece()
+  }
+}
+
+function canMovePiece(nextX, nextY) {
+  for (let y = 0; y < currentPiece.shape.length; y++)
+    for (let x = 0; x < currentPiece.shape[y].length; x++) {
+      blockY = nextY + y
+      blockX = nextX + x
+      if (currentPiece.shape[y][x] && (blockX < 0 || blockX >= COLS || blockY < 0 || blockY >= ROWS || board[blockY][blockX])) return false
+    }
+  return true
 }
 
 function clearCurrentPiece(pieceWidth, pieceHeight) {
@@ -68,7 +83,6 @@ function drawCurrentPiece() {
     for (let x = 0; x < currentPiece.shape[y].length; x++) {
       if (currentPiece.shape[y][x]) {
         context.fillRect((currentX + x) * BLOCK_SIZE, (currentY + y) * BLOCK_SIZE, BLOCK_SIZE, BLOCK_SIZE)
-        // context.strokeRect((currentX + x) * BLOCK_SIZE, (currentY + y) * BLOCK_SIZE, BLOCK_SIZE, BLOCK_SIZE)
       }
     }
   }
@@ -76,6 +90,14 @@ function drawCurrentPiece() {
 
 function moveDownCurrentPiece() {
   currentY++
+}
+
+function mergeCurrentPiece() {
+  for (let y = 0; y < currentPiece.shape.length; y++)
+    for (let x = 0; x < currentPiece.shape[0].length; x++)
+      if (currentPiece.shape[y][x]) {
+        board[currentY + y][currentX + x] = currentPiece.color
+      }
 }
 
 startGame()
