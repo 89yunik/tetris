@@ -29,7 +29,7 @@ const pieces = [
     [0, 0, 1],
   ], // J
 ]
-const pieceColors = ["cyan", "grey", "orange", "yellow", "green", "purple", "red"]
+const pieceColors = [null, "cyan", "grey", "orange", "yellow", "green", "purple", "red"]
 
 const [ROWS, COLS, BLOCK_SIZE] = [20, 10, 30]
 let [currentPiece, currentX, currentY, updateTime, board, gameInterval] = [null, 0, 0, 500]
@@ -47,7 +47,7 @@ function startGame() {
 
 function spawnPiece() {
   const index = Math.floor(Math.random() * pieces.length)
-  currentPiece = { shape: pieces[index], color: index }
+  currentPiece = { shape: pieces[index], color: index + 1 }
   currentX = Math.floor(COLS / 2) - Math.floor(currentPiece.shape[0].length / 2)
   currentY = 0
 }
@@ -56,11 +56,11 @@ function updateCurrentPiece() {
   if (canMovePiece(currentX, currentY + 1)) {
     clearCurrentPiece((pieceWidth = currentPiece.shape[0].length), (pieceHeight = currentPiece.shape.length))
     moveDownCurrentPiece()
-    drawCurrentPiece()
   } else {
     mergeCurrentPiece()
     spawnPiece()
   }
+  drawCurrentPiece()
 }
 
 function canMovePiece(nextX, nextY) {
