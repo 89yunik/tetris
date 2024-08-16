@@ -40,7 +40,7 @@ function startGame() {
   spawnPiece()
 
   if (gameInterval) clearInterval(gameInterval)
-  gameInterval = setInterval(updateCurrentPiece, updateTime)
+  gameInterval = setInterval(updateCurrentPiece, updateTime, (offsetX = 0), (offsetY = 1))
 
   drawCurrentPiece()
 }
@@ -57,11 +57,13 @@ function spawnPiece() {
   }
 }
 
-function updateCurrentPiece() {
-  if (canDrawPiece(currentX, currentY + 1)) {
+function updateCurrentPiece(offsetX = 0, offsetY = 0, merge = true) {
+  const nextX = currentX + offsetX
+  const nextY = currentY + offsetY
+  if (canDrawPiece(nextX, nextY)) {
     clearCurrentPiece((pieceWidth = currentPiece.shape[0].length), (pieceHeight = currentPiece.shape.length))
-    moveDownCurrentPiece()
-  } else {
+    moveCurrentPiece(nextX, nextY)
+  } else if (merge) {
     mergeCurrentPiece()
     spawnPiece()
   }
@@ -93,8 +95,9 @@ function drawCurrentPiece() {
   }
 }
 
-function moveDownCurrentPiece() {
-  currentY++
+function moveCurrentPiece(nextX, nextY) {
+  currentX = nextX
+  currentY = nextY
 }
 
 function mergeCurrentPiece() {
@@ -104,5 +107,21 @@ function mergeCurrentPiece() {
         board[currentY + y][currentX + x] = currentPiece.color
       }
 }
+
+document.addEventListener("keydown", (e) => {
+  switch (e.key) {
+    case "ArrowLeft":
+      updateCurrentPiece((offsetX = -1), (offsetY = 0), (merge = false))
+      break
+    case "ArrowRight":
+      updateCurrentPiece((offsetX = 1), (offsetY = 0), (merge = false))
+      break
+    case "ArrowDown":
+      updateCurrentPiece((offsetX = 0), (offsetY = 1))
+      break
+    case "ArrowUp":
+      break
+  }
+})
 
 startGame()
