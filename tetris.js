@@ -50,10 +50,15 @@ function spawnPiece() {
   currentPiece = { shape: pieces[index], color: index + 1 }
   currentX = Math.floor(COLS / 2) - Math.floor(currentPiece.shape[0].length / 2)
   currentY = 0
+
+  if (!canDrawPiece(currentX, currentY)) {
+    alert("GAME OVER")
+    startGame()
+  }
 }
 
 function updateCurrentPiece() {
-  if (canMovePiece(currentX, currentY + 1)) {
+  if (canDrawPiece(currentX, currentY + 1)) {
     clearCurrentPiece((pieceWidth = currentPiece.shape[0].length), (pieceHeight = currentPiece.shape.length))
     moveDownCurrentPiece()
   } else {
@@ -63,7 +68,7 @@ function updateCurrentPiece() {
   drawCurrentPiece()
 }
 
-function canMovePiece(nextX, nextY) {
+function canDrawPiece(nextX, nextY) {
   for (let y = 0; y < currentPiece.shape.length; y++)
     for (let x = 0; x < currentPiece.shape[y].length; x++) {
       blockY = nextY + y
