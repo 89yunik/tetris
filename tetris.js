@@ -61,7 +61,7 @@ function updateCurrentPiece(offsetX = 0, offsetY = 0, merge = true) {
   const nextX = currentX + offsetX
   const nextY = currentY + offsetY
   if (canDrawPiece(nextX, nextY)) {
-    clearCurrentPiece((pieceWidth = currentPiece.shape[0].length), (pieceHeight = currentPiece.shape.length))
+    clearCurrentPiece()
     moveCurrentPiece(nextX, nextY)
   } else if (merge) {
     mergeCurrentPiece()
@@ -80,7 +80,9 @@ function canDrawPiece(nextX, nextY) {
   return true
 }
 
-function clearCurrentPiece(pieceWidth, pieceHeight) {
+function clearCurrentPiece() {
+  pieceWidth = currentPiece.shape[0].length
+  pieceHeight = currentPiece.shape.length
   context.clearRect(currentX * BLOCK_SIZE, currentY * BLOCK_SIZE, pieceWidth * BLOCK_SIZE, pieceHeight * BLOCK_SIZE)
 }
 
@@ -120,8 +122,21 @@ document.addEventListener("keydown", (e) => {
       updateCurrentPiece((offsetX = 0), (offsetY = 1))
       break
     case "ArrowUp":
+      rotateCurrentPiece()
       break
   }
 })
+
+function rotateCurrentPiece() {
+  clearCurrentPiece()
+  const rotatedShape = currentPiece.shape[0].map((_, i) => currentPiece.shape.map((row) => row[i]).reverse())
+  currentPiece.shape = rotatedShape
+
+  if (!canDrawPiece((nextX = currentX), (nextY = currentY))) {
+    currentPiece.shape = rotatedShape[0].map((_, i) => rotatedShape.map((row) => row[i])).reverse()
+  }
+
+  drawCurrentPiece()
+}
 
 startGame()
