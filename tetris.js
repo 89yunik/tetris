@@ -83,7 +83,13 @@ function canDrawPiece(nextX, nextY) {
 function clearCurrentPiece() {
   pieceWidth = currentPiece.shape[0].length
   pieceHeight = currentPiece.shape.length
-  context.clearRect(currentX * BLOCK_SIZE, currentY * BLOCK_SIZE, pieceWidth * BLOCK_SIZE, pieceHeight * BLOCK_SIZE)
+  for (let y = 0; y < pieceHeight; y++)
+    for (let x = 0; x < pieceWidth; x++)
+      if (currentPiece.shape[y][x]) {
+        startX = (currentX + x) * BLOCK_SIZE
+        startY = (currentY + y) * BLOCK_SIZE
+        context.clearRect(startX, startY, BLOCK_SIZE, BLOCK_SIZE)
+      }
 }
 
 function drawCurrentPiece() {
@@ -123,6 +129,9 @@ document.addEventListener("keydown", (e) => {
       break
     case "ArrowUp":
       rotateCurrentPiece()
+      break
+    case " ":
+      while (canDrawPiece) updateCurrentPiece((offsetX = 0), (offsetY = 1))
       break
   }
 })
