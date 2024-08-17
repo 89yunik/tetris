@@ -3,7 +3,7 @@ body {
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  height: 98vh;
+  height: 95vh;
   margin: 0;
   font-family: Arial, sans-serif;
 }
@@ -27,7 +27,8 @@ body {
   #right,
   #drop {
     display: inline;
-    height: 5vh;
+    width: 8vw;
+    height: 8vh;
   }
 
   #keypad {
