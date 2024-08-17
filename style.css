@@ -27,5 +27,22 @@ body {
   #right,
   #drop {
     display: inline;
+    height: 5vh;
+  }
+
+  #keypad {
+    display: flex;
+    flex-direction: row;
+    width: 100%;
+    justify-content: space-between;
+    align-items: center;
+    max-width: 300px;
+  }
+
+  #arrow-buttons {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
   }
 }
