@@ -3,11 +3,29 @@ body {
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  height: 100vh;
+  height: 98vh;
   margin: 0;
   font-family: Arial, sans-serif;
 }
 
-canvas {
+#tetris {
   border: 1px solid #000;
+}
+
+#rotate,
+#left,
+#down,
+#right,
+#drop {
+  display: none;
+}
+
+@media (max-width: 768px) {
+  #rotate,
+  #left,
+  #down,
+  #right,
+  #drop {
+    display: inline;
+  }
 }

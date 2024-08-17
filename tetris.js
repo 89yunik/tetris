@@ -138,22 +138,38 @@ function clearFullRows() {
 document.addEventListener("keydown", (e) => {
   switch (e.key) {
     case "ArrowLeft":
-      updateCurrentPiece((offsetX = -1), (offsetY = 0), (merge = false))
+      moveLeftCurrentPiece()
       break
     case "ArrowRight":
-      updateCurrentPiece((offsetX = 1), (offsetY = 0), (merge = false))
+      moveRightCurrentPiece()
       break
     case "ArrowDown":
-      updateCurrentPiece((offsetX = 0), (offsetY = 1))
+      moveDownCurrentPiece()
       break
     case "ArrowUp":
       rotateCurrentPiece()
       break
     case " ":
-      while (canDrawPiece((nextX = currentX), (nextY = currentY + 1))) updateCurrentPiece((offsetX = 0), (offsetY = 1))
+      dropCurrentPiece()
       break
   }
 })
+
+function moveLeftCurrentPiece() {
+  updateCurrentPiece((offsetX = -1), (offsetY = 0), (merge = false))
+}
+
+function moveRightCurrentPiece() {
+  updateCurrentPiece((offsetX = 1), (offsetY = 0), (merge = false))
+}
+
+function moveDownCurrentPiece() {
+  updateCurrentPiece((offsetX = 0), (offsetY = 1))
+}
+
+function dropCurrentPiece() {
+  while (canDrawPiece((nextX = currentX), (nextY = currentY + 1))) updateCurrentPiece((offsetX = 0), (offsetY = 1))
+}
 
 function rotateCurrentPiece() {
   clearCurrentPiece()
@@ -166,5 +182,11 @@ function rotateCurrentPiece() {
 
   drawCurrentPiece()
 }
+
+document.getElementById("left").addEventListener("click", moveLeftCurrentPiece)
+document.getElementById("right").addEventListener("click", moveRightCurrentPiece)
+document.getElementById("down").addEventListener("click", moveDownCurrentPiece)
+document.getElementById("rotate").addEventListener("click", rotateCurrentPiece)
+document.getElementById("drop").addEventListener("click", dropCurrentPiece)
 
 startGame()
