@@ -5,28 +5,28 @@ const context = canvas.getContext("2d")
 const pieces = [
   [[1, 1, 1, 1]], // I
   [
-    [1, 1, 1],
-    [0, 1, 0],
+    [2, 2, 2],
+    [0, 2, 0],
   ], // T
   [
-    [1, 1, 0],
-    [0, 1, 1],
+    [3, 3, 0],
+    [0, 3, 3],
   ], // S
   [
-    [0, 1, 1],
-    [1, 1, 0],
+    [0, 4, 4],
+    [4, 4, 0],
   ], // Z
   [
-    [1, 1],
-    [1, 1],
+    [5, 5],
+    [5, 5],
   ], // O
   [
-    [1, 1, 1],
-    [1, 0, 0],
+    [6, 6, 6],
+    [6, 0, 0],
   ], // L
   [
-    [1, 1, 1],
-    [0, 0, 1],
+    [7, 7, 7],
+    [0, 0, 7],
   ], // J
 ]
 const pieceColors = [null, "cyan", "grey", "orange", "yellow", "green", "purple", "red"]
@@ -36,7 +36,7 @@ let [currentPiece, currentX, currentY, updateTime, board, gameInterval] = [null,
 
 function startGame() {
   board = Array.from({ length: ROWS }, () => Array(COLS).fill(0))
-  context.clearRect(0, 0, canvas.width, canvas.height)
+  clearBoard()
   spawnPiece()
 
   if (gameInterval) clearInterval(gameInterval)
@@ -65,6 +65,7 @@ function updateCurrentPiece(offsetX = 0, offsetY = 0, merge = true) {
     moveCurrentPiece(nextX, nextY)
   } else if (merge) {
     mergeCurrentPiece()
+    clearFullRows()
     spawnPiece()
   }
   drawCurrentPiece()
@@ -86,18 +87,24 @@ function clearCurrentPiece() {
   for (let y = 0; y < pieceHeight; y++)
     for (let x = 0; x < pieceWidth; x++)
       if (currentPiece.shape[y][x]) {
-        startX = (currentX + x) * BLOCK_SIZE
-        startY = (currentY + y) * BLOCK_SIZE
-        context.clearRect(startX, startY, BLOCK_SIZE, BLOCK_SIZE)
+        context.clearRect((currentX + x) * BLOCK_SIZE, (currentY + y) * BLOCK_SIZE, BLOCK_SIZE, BLOCK_SIZE)
       }
 }
 
+function clearBoard() {
+  context.clearRect(0, 0, canvas.width, canvas.height)
+}
+
 function drawCurrentPiece() {
-  context.fillStyle = pieceColors[currentPiece.color]
-  for (let y = 0; y < currentPiece.shape.length; y++) {
-    for (let x = 0; x < currentPiece.shape[y].length; x++) {
-      if (currentPiece.shape[y][x]) {
-        context.fillRect((currentX + x) * BLOCK_SIZE, (currentY + y) * BLOCK_SIZE, BLOCK_SIZE, BLOCK_SIZE)
+  drawBoard((startX = currentX), (startY = currentY), (subBoard = currentPiece.shape))
+}
+
+function drawBoard(startX, startY, subBoard) {
+  for (let y = 0; y < subBoard.length; y++) {
+    for (let x = 0; x < subBoard[0].length; x++) {
+      if (subBoard[y][x]) {
+        context.fillStyle = pieceColors[subBoard[y][x]]
+        context.fillRect((x + startX) * BLOCK_SIZE, (y + startY) * BLOCK_SIZE, BLOCK_SIZE, BLOCK_SIZE)
       }
     }
   }
@@ -114,6 +121,18 @@ function mergeCurrentPiece() {
       if (currentPiece.shape[y][x]) {
         board[currentY + y][currentX + x] = currentPiece.color
       }
+}
+
+function clearFullRows() {
+  const rowsToClear = []
+  for (let y = 0; y < ROWS; y++) if (board[y].every((cell) => cell)) rowsToClear.push(y)
+  for (let row of rowsToClear) {
+    board.splice(row, 1)
+    board.unshift(Array(COLS).fill(0))
+  }
+
+  clearBoard()
+  drawBoard((startX = 0), (startY = 0), (subBoard = board))
 }
 
 document.addEventListener("keydown", (e) => {
