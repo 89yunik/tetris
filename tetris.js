@@ -131,7 +131,7 @@ document.addEventListener("keydown", (e) => {
       rotateCurrentPiece()
       break
     case " ":
-      while (canDrawPiece) updateCurrentPiece((offsetX = 0), (offsetY = 1))
+      while (canDrawPiece((nextX = currentX), (nextY = currentY + 1))) updateCurrentPiece((offsetX = 0), (offsetY = 1))
       break
   }
 })
