@@ -27,8 +27,18 @@ body {
   #right,
   #drop {
     display: inline;
-    width: 8vw;
-    height: 8vh;
+    height: 60px;
+  }
+
+  #rotate,
+  #left,
+  #down,
+  #right {
+    width: 50px;
+  }
+
+  #drop {
+    width: 120px;
   }
 
   #keypad {
