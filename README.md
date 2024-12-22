@@ -1,5 +1,9 @@
 # Tetris Game in JavaScript
 
+## Service Overview
+
+![image](https://github.com/user-attachments/assets/cae26d9c-87fc-4c70-83ac-ba85217ce286)
+
 ## Link
 
 https://89yunik.github.io/tetris/
