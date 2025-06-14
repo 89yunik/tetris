@@ -60,4 +60,4 @@ https://89yunik.github.io/tetris/
 ## 📄 라이선스
 
 MIT License  
-저자: [NickYun](https://github.com/89yunik)
+저자: [Nick Yun](https://github.com/89yunik)
