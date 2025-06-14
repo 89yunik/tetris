@@ -1,20 +1,63 @@
-# Tetris Game in JavaScript
+# 🎮 테트리스 (Tetris)
 
-## Service Overview
+웹 브라우저에서 실행 가능한 **테트리스 게임**입니다. 바닐라 JavaScript와 HTML5 `<canvas>`를 이용해 제작되었으며, 반응형으로 모바일에서도 조작 버튼이 제공됩니다.
 
-![image](https://github.com/user-attachments/assets/cae26d9c-87fc-4c70-83ac-ba85217ce286)
+---
 
-## Link
+## 🔧 실행 방법
 
 https://89yunik.github.io/tetris/
 
-## Usage
+## 📁 파일 구성
 
-- **Arrow Keys**
-  - **Left Arrow**: Move the tetromino left.
-  - **Right Arrow**: Move the tetromino right.
-  - **Down Arrow**: Move the tetromino down at a faster rate.
-  
-- **Up Arrow**: Rotate the tetromino clockwise.
-  
-- **Spacebar**: Drop the tetromino instantly to the bottom of the game board.
+| 파일명        | 설명                         |
+| ------------- | ---------------------------- |
+| `index.html`  | 메인 HTML 문서               |
+| `style.css`   | 테트리스 UI 스타일 정의      |
+| `tetris.js`   | 게임 로직 구현 (클래스 기반) |
+
+---
+
+## 🎮 조작 방법
+
+### 키보드 (PC)
+
+| 동작       | 키보드 입력    |
+| ---------- | --------------- |
+| 좌 이동    | ←               |
+| 우 이동    | →               |
+| 아래 이동  | ↓               |
+| 회전       | ↑               |
+| 하드 드롭  | Space           |
+| 일시 정지  | Pause 버튼 클릭 |
+
+### 터치 UI (모바일)
+
+- 화면 하단의 가상 버튼 제공  
+- 버튼 누르기만 해도 조작 가능  
+
+---
+
+## ✨ 주요 기능
+
+- 다양한 블록(I, T, Z, S, O, J, L) 지원  
+- 충돌 감지 및 회전 처리  
+- 줄 완성 시 제거 및 점수 증가  
+- 자동 난이도 조절 (레벨 증가 시 속도 증가)  
+- 반응형 UI (모바일/PC 모두 지원)  
+
+---
+
+## 🛠️ 사용 기술
+
+- HTML5 Canvas  
+- JavaScript (ES6 Class)  
+- CSS3 (반응형 디자인)  
+- Bootstrap Icons  
+
+---
+
+## 📄 라이선스
+
+MIT License  
+저자: [NickYun](https://github.com/89yunik)
