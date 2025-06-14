@@ -68,6 +68,8 @@ class TetrisGame {
     this.gameInterval = null
     this.gameSpeed = GAME_CONFIG.INITIAL_SPEED
     this.isGameRunning = false
+    this.level = 1
+    this.totalLines = 0
   }
 
   createEmptyBoard = () => Array.from({ length: GAME_CONFIG.ROWS }, () => Array(GAME_CONFIG.COLS).fill(0))
@@ -84,6 +86,8 @@ class TetrisGame {
     if (this.gameInterval) clearInterval(this.gameInterval)
     this.gameInterval = setInterval(() => this.moveDown(), this.gameSpeed)
   }
+
+  pause = () => (this.isGameRunning = !this.isGameRunning)
 
   spawnNewPiece() {
     const randomIndex = Math.floor(Math.random() * TETRIS_PIECES.length)
@@ -116,9 +120,7 @@ class TetrisGame {
           const boardX = x + col
           const boardY = y + row
 
-          if (boardX < 0 || boardX >= GAME_CONFIG.COLS || boardY < 0 || boardY >= GAME_CONFIG.ROWS || this.board[boardY][boardX]) {
-            return false
-          }
+          if (boardX < 0 || boardX >= GAME_CONFIG.COLS || boardY < 0 || boardY >= GAME_CONFIG.ROWS || this.board[boardY][boardX]) return false
         }
       }
     }
@@ -221,11 +223,7 @@ class TetrisGame {
     const cols = matrix[0].length
     const rotated = Array.from({ length: cols }, () => Array(rows).fill(0))
 
-    for (let row = 0; row < rows; row++) {
-      for (let col = 0; col < cols; col++) {
-        rotated[col][rows - 1 - row] = matrix[row][col]
-      }
-    }
+    for (let row = 0; row < rows; row++) for (let col = 0; col < cols; col++) rotated[col][rows - 1 - row] = matrix[row][col]
 
     return rotated
   }
@@ -234,9 +232,8 @@ class TetrisGame {
     if (!this.isGameRunning) return
 
     this.clearPiece()
-    while (this.isValidPosition(this.currentPosition.x, this.currentPosition.y + 1)) {
-      this.currentPosition.y++
-    }
+    while (this.isValidPosition(this.currentPosition.x, this.currentPosition.y + 1)) this.currentPosition.y++
+
     this.drawPiece()
 
     // 즉시 고정
@@ -249,84 +246,97 @@ class TetrisGame {
     const { shape, color } = this.currentPiece
     const { x, y } = this.currentPosition
 
-    for (let row = 0; row < shape.length; row++) {
-      for (let col = 0; col < shape[row].length; col++) {
-        if (shape[row][col]) {
-          this.board[y + row][x + col] = color
-        }
-      }
-    }
+    for (let row = 0; row < shape.length; row++) for (let col = 0; col < shape[row].length; col++) if (shape[row][col]) this.board[y + row][x + col] = color
   }
 
   clearCompleteLines() {
     const linesToClear = []
 
-    for (let row = 0; row < GAME_CONFIG.ROWS; row++) {
-      if (this.board[row].every((cell) => cell !== 0)) {
-        linesToClear.push(row)
-      }
-    }
+    for (let row = 0; row < GAME_CONFIG.ROWS; row++) if (this.board[row].every((cell) => cell !== 0)) linesToClear.push(row)
 
     // 완성된 라인 제거 (역순으로 제거해야 인덱스 문제 없음)
-    for (let i = linesToClear.length - 1; i >= 0; i--) {
-      this.board.splice(linesToClear[i], 1)
-      this.board.unshift(Array(GAME_CONFIG.COLS).fill(0))
-    }
+    for (let i = linesToClear.length - 1; i >= 0; i--) this.board.splice(linesToClear[i], 1)
+    for (let i = linesToClear.length - 1; i >= 0; i--) this.board.unshift(Array(GAME_CONFIG.COLS).fill(0))
 
     if (linesToClear.length > 0) {
+      this.updateScore(linesToClear.length)
+      this.updateLevel()
+
       this.clearCanvas()
       this.drawBoard()
     }
   }
 
+  updateScore = (linesCleared) => (this.totalLines += linesCleared)
+
+  updateLevel() {
+    // 10줄마다 레벨 업
+    const newLevel = Math.floor(this.totalLines / 10) + 1
+
+    if (newLevel > this.level) {
+      this.level = newLevel
+      this.updateGameSpeed()
+    }
+  }
+
+  updateGameSpeed() {
+    // 레벨이 올라갈수록 속도 증가 (최소 50ms까지)
+    const speedDecrease = (this.level - 1) * 50
+    this.gameSpeed = Math.max(50, GAME_CONFIG.INITIAL_SPEED - speedDecrease)
+
+    // 게임 루프 다시 시작 (새로운 속도로)
+    this.startGameLoop()
+  }
+
   gameOver() {
     this.isGameRunning = false
-    if (this.gameInterval) {
-      clearInterval(this.gameInterval)
-    }
+    if (this.gameInterval) clearInterval(this.gameInterval)
+
     alert("GAME OVER")
     this.startGame()
   }
+}
 
-  setupEventListeners() {
-    // 키보드 이벤트
-    document.addEventListener("keydown", (e) => {
-      switch (e.key) {
-        case "ArrowLeft":
-          this.moveLeft()
-          break
-        case "ArrowRight":
-          this.moveRight()
-          break
-        case "ArrowDown":
-          this.moveDown()
-          break
-        case "ArrowUp":
-          this.rotatePiece()
-          break
-        case " ":
-          e.preventDefault()
-          this.dropPiece()
-          break
-      }
-    })
+function setupEventListeners(game) {
+  // 키보드 이벤트
+  document.addEventListener("keydown", (e) => {
+    switch (e.key) {
+      case "ArrowLeft":
+        game.moveLeft()
+        break
+      case "ArrowRight":
+        game.moveRight()
+        break
+      case "ArrowDown":
+        game.moveDown()
+        break
+      case "ArrowUp":
+        game.rotatePiece()
+        break
+      case " ":
+        e.preventDefault()
+        game.dropPiece()
+        break
+    }
+  })
 
-    // 버튼 이벤트 (HTML 버튼이 있다면)
-    const leftBtn = document.getElementById("left")
-    const rightBtn = document.getElementById("right")
-    const downBtn = document.getElementById("down")
-    const rotateBtn = document.getElementById("rotate")
-    const dropBtn = document.getElementById("drop")
+  // 버튼 이벤트 (HTML 버튼이 있다면)
+  const pauseBtn = document.getElementById("pause")
+  const leftBtn = document.getElementById("left")
+  const rightBtn = document.getElementById("right")
+  const downBtn = document.getElementById("down")
+  const rotateBtn = document.getElementById("rotate")
+  const dropBtn = document.getElementById("drop")
 
-    if (leftBtn) leftBtn.addEventListener("click", () => this.moveLeft())
-    if (rightBtn) rightBtn.addEventListener("click", () => this.moveRight())
-    if (downBtn) downBtn.addEventListener("click", () => this.moveDown())
-    if (rotateBtn) rotateBtn.addEventListener("click", () => this.rotatePiece())
-    if (dropBtn) dropBtn.addEventListener("click", () => this.dropPiece())
-  }
+  if (pauseBtn) pauseBtn.addEventListener("click", () => game.pause())
+  if (leftBtn) leftBtn.addEventListener("click", () => game.moveLeft())
+  if (rightBtn) rightBtn.addEventListener("click", () => game.moveRight())
+  if (downBtn) downBtn.addEventListener("click", () => game.moveDown())
+  if (rotateBtn) rotateBtn.addEventListener("click", () => game.rotatePiece())
+  if (dropBtn) dropBtn.addEventListener("click", () => game.dropPiece())
 }
 
 // 게임 초기화 및 시작
 const tetrisGame = new TetrisGame("tetris")
-tetrisGame.setupEventListeners()
+setupEventListeners(tetrisGame)
 tetrisGame.startGame()
