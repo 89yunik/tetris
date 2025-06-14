@@ -160,9 +160,7 @@ class TetrisGame {
     }
   }
 
-  clearCanvas() {
-    this.context.clearRect(0, 0, this.canvas.width, this.canvas.height)
-  }
+  clearCanvas = () => this.context.clearRect(0, 0, this.canvas.width, this.canvas.height)
 
   moveLeft() {
     if (!this.isGameRunning) return

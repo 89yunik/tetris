@@ -8,6 +8,11 @@ body {
   font-family: Arial, sans-serif;
 }
 
+h1 {
+  font-family: 'Press Start 2P', cursive;
+  font-size: 24px;
+}
+
 #tetris {
   border: 1px solid #000;
 }
@@ -21,6 +26,7 @@ body {
 }
 
 @media (max-width: 768px) {
+
   #rotate,
   #left,
   #down,
@@ -28,6 +34,7 @@ body {
   #drop {
     display: inline;
     height: 60px;
+    font-family: 'Orbitron', sans-serif;
   }
 
   #rotate,
